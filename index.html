@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OddOnes</title>
+  <meta name="description" content="OddOnes is a clean visual puzzle game with fresh randomized rounds every time you play." />
+  <style>
+    :root{
+      --bg:#07111f;
+      --text:#eef4ff;
+      --muted:#a9b8d4;
+      --line:rgba(255,255,255,.09);
+      --accent:#7d9cff;
+      --accent-2:#62e5c2;
+      --success:#5ee08b;
+      --danger:#ff7a7a;
+      --shadow:0 18px 60px rgba(0,0,0,.32);
+      --shadow-soft:0 10px 28px rgba(0,0,0,.22);
+      --max:1220px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(125,156,255,.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(98,229,194,.10), transparent 24%),
+        linear-gradient(180deg, #0a1324 0%, #07111f 42%, #06101c 100%);
+      overflow-x:hidden;
+    }
+    .shell{position:relative;max-width:var(--max);margin:0 auto;padding:28px 20px 64px}
+    .screen{display:none}
+    .screen.active{display:block}
+
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:12px 14px;border:1px solid var(--line);
+      background:rgba(10,19,36,.56);backdrop-filter:blur(18px);
+      border-radius:999px;box-shadow:var(--shadow-soft);
+      position:sticky;top:16px;z-index:10;
+    }
+    .brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text)}
+    .brand-mark{
+      width:42px;height:42px;border-radius:14px;
+      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 10px 24px rgba(0,0,0,.26);
+      position:relative;
+    }
+    .brand-mark::after{
+      content:"";position:absolute;inset:11px;border-radius:10px;
+      border:2px solid rgba(255,255,255,.68);transform:rotate(14deg);
+    }
+    .brand-copy strong{font-size:1rem;letter-spacing:.01em;display:block}
+    .brand-copy span{font-size:.8rem;color:var(--muted);display:block;margin-top:4px}
+
+    .btn,button{
+      appearance:none;border:none;font:inherit;cursor:pointer;border-radius:999px;
+      padding:14px 22px;font-weight:800;
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn:hover,button:hover{transform:translateY(-2px)}
+    .btn-primary{
+      color:#08111f;background:linear-gradient(135deg, var(--accent-2), #b1fff0);
+      box-shadow:0 12px 28px rgba(98,229,194,.22);
+    }
+    .btn-secondary,.btn-ghost{
+      color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--line);
+      box-shadow:var(--shadow-soft);
+    }
+    .btn-ghost{color:var(--muted)}
+
+    .hero{margin-top:10px;padding:26px 0 6px;text-align:center}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:10px;padding:9px 14px;border-radius:999px;
+      background:rgba(255,255,255,.055);border:1px solid var(--line);color:#d7e3ff;font-weight:800;font-size:.88rem;
+      margin-bottom:18px;
+    }
+    .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 16px var(--accent-2)}
+    h1{margin:0 auto;font-size:clamp(3rem,6vw,5rem);line-height:.94;letter-spacing:-.07em;max-width:760px}
+    .hero-copy{margin:18px auto 0;max-width:760px;font-size:1.08rem;line-height:1.72;color:var(--muted)}
+    .hero-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:24px}
+
+    .section{margin-top:24px}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+    .section-head h2{margin:0;font-size:1.9rem;letter-spacing:-.05em}
+    .section-head p{margin:0;color:var(--muted)}
+
+    .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+    .card,.game-shell,.completion{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+      backdrop-filter:blur(18px);box-shadow:var(--shadow);
+    }
+    .card{
+      border-radius:30px;padding:24px 24px 22px;position:relative;overflow:hidden;
+      display:flex;flex-direction:column;min-height:290px;grid-column:span 2;
+    }
+    .grid > .card:nth-child(4){grid-column:2 / span 2}
+    .grid > .card:nth-child(5){grid-column:4 / span 2}
+    .card::before{
+      content:"";position:absolute;inset:auto -40px -80px auto;width:180px;height:180px;border-radius:50%;
+      background:radial-gradient(circle, rgba(125,156,255,.16), rgba(125,156,255,0) 70%);
+      pointer-events:none;
+    }
+    .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
+    .icon{
+      width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:1.6rem;
+      background:linear-gradient(135deg, rgba(125,156,255,.22), rgba(98,229,194,.18));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
+    }
+    .difficulty{padding:10px 12px;border-radius:999px;font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);color:var(--muted)}
+    .card h3{margin:0;font-size:1.7rem;letter-spacing:-.05em;line-height:1.02}
+    .card p{margin:12px 0 18px;color:var(--muted);line-height:1.65;font-size:1rem}
+    .card ul{margin:0;padding-left:18px;color:#dce7ff;line-height:1.7;font-size:.94rem}
+    .card .spacer{flex:1}
+    .play-row{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap}
+    .tiny{font-size:.87rem;color:var(--muted)}
+    .footer-note{margin-top:26px;text-align:center;color:var(--muted);font-size:.95rem}
+
+    .back-row{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0 14px}
+    .game-shell{border-radius:34px;padding:28px}
+    .status-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+    .badge,.score-chip{padding:12px 16px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);font-weight:800;color:#dce7ff}
+    .game-title{font-size:clamp(2.2rem,4vw,3.4rem);letter-spacing:-.06em;line-height:.95;margin:0 0 8px}
+    .game-desc{margin:0;color:var(--muted);max-width:820px;line-height:1.65}
+
+    .question-card,.color-grid-wrap,.pattern-wrap,.symmetry-wrap{margin-top:24px}
+    .question{font-size:clamp(1.5rem,2.8vw,2.25rem);font-weight:900;letter-spacing:-.05em;margin-bottom:16px}
+    .subtle{color:var(--muted);font-size:.98rem;line-height:1.6}
+    .options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+    .option,.shape-card{
+      width:100%;text-align:left;color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--line);
+      border-radius:22px;padding:20px;box-shadow:var(--shadow-soft)
+    }
+    .option:hover,.shape-card:hover{border-color:rgba(125,156,255,.6);background:rgba(255,255,255,.07)}
+    .option.correct,.shape-card.correct{border-color:rgba(94,224,139,.75);background:rgba(94,224,139,.12)}
+    .option.wrong,.shape-card.wrong{border-color:rgba(255,122,122,.75);background:rgba(255,122,122,.12)}
+    .feedback{min-height:30px;margin-top:18px;font-weight:700;color:#dce7ff}
+    .next-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+
+    .color-grid{display:grid;gap:12px;justify-content:start;margin-top:18px}
+    .color-cell{width:84px;height:84px;border:none;border-radius:22px;cursor:pointer;box-shadow:var(--shadow-soft);transition:transform .16s ease, outline-color .16s ease}
+    .color-cell:hover{transform:scale(1.04)}
+
+    .shape-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:18px}
+    .shape-grid{display:grid;grid-template-columns:repeat(5,18px);gap:6px;justify-content:center;margin:6px auto 8px}
+    .dot-grid{width:18px;height:18px;border-radius:6px;background:#294264}
+    .dot-grid.on{background:#f2f7ff;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+
+    .pattern-seq{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0}
+    .seq-box{min-width:94px;padding:18px 16px;border-radius:22px;text-align:center;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:1.5rem;font-weight:900}
+
+    .completion{margin-top:24px;border-radius:28px;padding:26px}
+    .completion h3{margin:0 0 10px;font-size:2rem;letter-spacing:-.05em}
+    .completion p{margin:0;color:var(--muted);line-height:1.7}
+    .completion .mini-flex{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+    .hidden{display:none}
+
+    @media (max-width:1080px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .card{grid-column:auto}
+      .grid > .card:nth-child(4), .grid > .card:nth-child(5){grid-column:auto}
+      .shape-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width:700px){
+      .shell{padding:18px 14px 44px}
+      .nav{border-radius:24px;padding:12px}
+      .brand-copy span{display:none}
+      .grid,.options,.shape-options{grid-template-columns:1fr}
+      .color-cell{width:66px;height:66px;border-radius:18px}
+      .seq-box{min-width:78px;font-size:1.25rem}
+      .card,.game-shell{padding:20px}
+      .hero{padding-top:22px}
+      .hero-copy{font-size:1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div id="homeScreen" class="screen active">
+      
+
+      <section class="hero">
+        <h1>OddOnes</h1>
+        <p class="hero-copy">A clean visual puzzle game with replayable levels. The homepage stays simple, each level refreshes automatically when you play again, and the first four game modes each contain five rounds.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="startLevel(1)">Play Level 1</button>
+                  </div>
+      </section>
+
+      <section id="levels" class="section">
+        <div class="section-head">
+          <div>
+            <h2>Choose your challenge</h2>
+            <p>The first three levels sit across the top, with the last two centred neatly underneath.</p>
+          </div>
+        </div>
+
+        <div class="grid">
+          <article class="card">
+            <div class="card-top"><div class="icon">💡</div><div class="difficulty">Warm up</div></div>
+            <h3>Level 1 · The Spark</h3>
+            <p>Classic odd-one-out questions with a trickier question bank and shuffled choices every run.</p>
+            <ul><li>5 rounds per run</li><li>Harder category twists</li><li>Shuffled answer positions</li></ul>
+            <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(1)">Play Level 1</button></div>
+          </article>
+
+          <article class="card">
+            <div class="card-top"><div class="icon">🎨</div><div class="difficulty">Focus</div></div>
+            <h3>Level 2 · Pixel Hunter</h3>
+            <p>Subtle colour-difference puzzles that are a little easier to read while still feeling fun.</p>
+            <ul><li>5 rounds per run</li><li>Fairer colour contrast</li><li>Random grid positions</li></ul>
+            <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(2)">Play Level 2</button></div>
+          </article>
+
+          <article class="card">
+            <div class="card-top"><div class="icon">🧩</div><div class="difficulty">Spatial</div></div>
+            <h3>Level 3 · Shape Shifter</h3>
+            <p>Symmetry-based logic cards now run across five rounds with a larger set of patterns.</p>
+            <ul><li>5 rounds per run</li><li>Fresh pattern selection</li><li>Randomized correct slot</li></ul>
+            <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(3)">Play Level 3</button></div>
+          </article>
+
+          <article class="card">
+            <div class="card-top"><div class="icon">🧠</div><div class="difficulty">Logic</div></div>
+            <h3>Level 4 · Logic Legend</h3>
+            <p>Sequence rounds now use simpler logic patterns across five rounds without heavy maths.</p>
+            <ul><li>5 rounds per run</li><li>Cleaner sequence rules</li><li>Less punishing maths</li></ul>
+            <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(4)">Play Level 4</button></div>
+          </article>
+
+          <article class="card">
+            <div class="card-top"><div class="icon">🏆</div><div class="difficulty">Boss level</div></div>
+            <h3>Level 5 · Ultimate OddOne</h3>
+            <p>A mixed final run with extra rounds, tighter colour reads, and harder combinations.</p>
+            <ul><li>5 mixed rounds</li><li>Fresh hard questions</li><li>Built for replayability</li></ul>
+            <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(5)">Play Level 5</button></div>
+          </article>
+        </div>
+      </section>
+
+      <div class="footer-note">Created for Malachy Thurtell · Discord: mooskimal_78612</div>
+    </div>
+
+    <div id="levelScreen" class="screen">
+      <div class="back-row"><button class="btn btn-secondary" onclick="goHome()">← Back to Home</button></div>
+      <div class="game-shell">
+        <div class="status-row">
+          <div class="badge" id="levelBadge">Level</div>
+                    <div class="score-chip" id="scoreChip">Progress 0 / 0 · Score 0</div>
+        </div>
+        <h2 class="game-title" id="levelTitle"></h2>
+        <p class="game-desc" id="levelDesc"></p>
+        <div id="gameArea"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const levelMeta = {
+      1: {title:'Level 1 · The Spark', desc:'Five odd-one-out rounds with randomized questions and shuffled answers every time you begin.'},
+      2: {title:'Level 2 · Pixel Hunter', desc:'Five colour-difference grids with fairer contrast and new odd-square positions each run.'},
+      3: {title:'Level 3 · Shape Shifter', desc:'Five symmetry puzzles that rotate through a larger set and randomize the display order every playthrough.'},
+      4: {title:'Level 4 · Logic Legend', desc:'Five cleaner sequence puzzles with less heavy maths and a new logic path whenever you restart.'},
+      5: {title:'Level 5 · Ultimate OddOne', desc:'A mixed final challenge with five harder rounds combining multiple puzzle types in a replayable boss run.'}
+    };
+
+    const oddOneBank = [
+      {q:'Which is the odd one out?', options:['Mercury','Venus','Mars','Pacific'], answer:3, why:'Pacific is an ocean. The others are planets.'},
+      {q:'Which is the odd one out?', options:['HTML','CSS','JavaScript','Photoshop'], answer:3, why:'Photoshop is design software. The others are web technologies.'},
+      {q:'Which is the odd one out?', options:['Router','Switch','Modem','Keyboard'], answer:3, why:'Keyboard is an input device. The others are networking devices.'},
+      {q:'Which is the odd one out?', options:['Binary','Decimal','Hexadecimal','Bluetooth'], answer:3, why:'Bluetooth is a wireless standard. The others are number systems.'},
+      {q:'Which is the odd one out?', options:['Sydney','Melbourne','Brisbane','Tasmania'], answer:3, why:'Tasmania is a state. The others are cities.'},
+      {q:'Which is the odd one out?', options:['CPU','RAM','SSD','Wi‑Fi'], answer:3, why:'Wi‑Fi is a wireless connection standard. The others are internal computer components.'},
+      {q:'Which is the odd one out?', options:['Triangle','Square','Pentagon','Compass'], answer:3, why:'Compass is a tool. The others are geometric shapes.'},
+      {q:'Which is the odd one out?', options:['Firewall','Antivirus','VPN','Monitor'], answer:3, why:'Monitor is display hardware. The others are security-related tools or protections.'},
+      {q:'Which is the odd one out?', options:['Python','Java','C++','GitHub'], answer:3, why:'GitHub is a platform. The others are programming languages.'},
+      {q:'Which is the odd one out?', options:['Shark','Dolphin','Whale','Submarine'], answer:3, why:'Submarine is a vehicle. The others are sea animals.'},
+      {q:'Which is the odd one out?', options:['Keyboard','Mouse','Trackpad','Speaker'], answer:3, why:'Speaker is an output device. The others are input devices.'},
+      {q:'Which is the odd one out?', options:['JPEG','PNG','GIF','USB'], answer:3, why:'USB is a hardware interface. The others are image file formats.'},
+      {q:'Which is the odd one out?', options:['Run','Jog','Sprint','Sit'], answer:3, why:'Sit is not a running movement. The others are all forms of running.'},
+      {q:'Which is the odd one out?', options:['Mercury','Iron','Copper','Silver'], answer:0, why:'Mercury is the only one that is liquid at room temperature. The others are solid metals.'},
+      {q:'Which is the odd one out?', options:['USB‑C','HDMI','Ethernet','Notebook'], answer:3, why:'Notebook is not a cable or connection type. The others are connectors or interfaces.'},
+      {q:'Which is the odd one out?', options:['Chrome','Safari','Firefox','Spotify'], answer:3, why:'Spotify is a streaming app. The others are web browsers.'}
+    ];
+
+    const symmetricPatterns = [
+      ['00100','01110','11111','01010','10001'],
+      ['00100','01110','11111','01110','00100'],
+      ['01110','11011','11111','11011','01110'],
+      ['11111','01010','00100','01010','11111'],
+      ['00100','01110','11111','00100','00100'],
+      ['01010','10101','11111','10101','01010'],
+      ['10001','01010','00100','01010','10001'],
+      ['11111','10001','01010','10001','11111']
+    ];
+    const asymmetricPatterns = [
+      ['00100','01100','11111','01010','10001'],
+      ['11100','01110','00100','01110','11111'],
+      ['01110','11011','11110','01010','10001'],
+      ['00110','01110','11111','01100','00100'],
+      ['11111','01010','00110','01010','11111'],
+      ['01010','10111','11111','10101','01010'],
+      ['10001','01010','00110','01010','10001'],
+      ['11111','10001','01110','10001','11111']
+    ];
+
+    let currentLevel = 1;
+    let state = {};
+    let runData = {};
+
+    function rand(min,max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function shuffle(arr){
+      const a = [...arr];
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+    function sample(arr,count){ return shuffle(arr).slice(0,count); }
+    function hexToRgb(hex){
+      const clean = hex.replace('#','');
+      const bigint = parseInt(clean, 16);
+      return {r:(bigint>>16)&255, g:(bigint>>8)&255, b:bigint&255};
+    }
+    function rgbToHex(r,g,b){
+      return '#' + [r,g,b].map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2,'0')).join('');
+    }
+    function shiftColor(hex, amount){
+      const {r,g,b} = hexToRgb(hex);
+      return rgbToHex(r + amount, g + amount, b + amount);
+    }
+    function randomBaseColor(){
+      const palettes = ['#6f86d8','#8099d8','#7d92cd','#8ea37e','#c58fa2','#728ecf','#6a8ab0','#9f86c8','#7ea8a1','#b18cbc'];
+      return palettes[rand(0, palettes.length - 1)];
+    }
+    function randomColorRound(forceHard=false){
+      const size = forceHard ? 4 : (Math.random() > 0.72 ? 4 : 3);
+      const base = randomBaseColor();
+      const amount = forceHard ? rand(8,12) : rand(14,20);
+      const diff = amount * (Math.random() > 0.5 ? 1 : -1);
+      const odd = shiftColor(base, diff);
+      const total = size * size;
+      return {size, base, odd, oddIndex: rand(0, total - 1)};
+    }
+    function buildOddQuestion(baseItem){
+      const correctText = baseItem.options[baseItem.answer];
+      const options = shuffle(baseItem.options);
+      return { q: baseItem.q, options, answer: options.indexOf(correctText), why: baseItem.why };
+    }
+    function buildSymmetryQuestion(){
+      const sym = sample(symmetricPatterns, 3);
+      const odd = sample(asymmetricPatterns, 1)[0];
+      const cards = shuffle([
+        {pattern:sym[0], odd:false},
+        {pattern:sym[1], odd:false},
+        {pattern:sym[2], odd:false},
+        {pattern:odd, odd:true}
+      ]);
+      return {
+        cards,
+        answer: cards.findIndex(c => c.odd),
+        why:'The highlighted answer is the only pattern that does not mirror evenly down the vertical center line.'
+      };
+    }
+    function makeArithmeticSequence(){
+      const start = rand(1, 14);
+      const step = rand(2, 4);
+      return {seq:[start,start+step,start+step*2,start+step*3], answer:start+step*4, why:`The sequence adds ${step} each time.`};
+    }
+    function makeDoublingSequence(){
+      const start = rand(1, 3) * 2;
+      return {seq:[start,start*2,start*4,start*8], answer:start*16, why:'Each number doubles.'};
+    }
+    function makeFibonacciLike(){
+      const a = rand(1, 3);
+      const b = rand(1, 4);
+      const c = a + b;
+      const d = b + c;
+      const e = c + d;
+      return {seq:[a,b,c,d,e], answer:d + e, why:'Each term is the sum of the previous two.'};
+    }
+    function makeAlternatingSequence(){
+      const a = rand(4, 12);
+      const up = rand(2, 4);
+      const down = 1;
+      return {seq:[a,a+up,a+up-down,a+2*up-down], answer:a+2*up-2*down, why:`The pattern alternates: +${up}, -${down}, +${up}, so next is -${down}.`};
+    }
+    function makeSquareSequence(){
+      const n = rand(1,3);
+      return {seq:[n*n,(n+1)*(n+1),(n+2)*(n+2),(n+3)*(n+3)], answer:(n+4)*(n+4), why:'These are consecutive square numbers.'};
+    }
+    function buildPatternQuestion(){
+      const generators = [makeArithmeticSequence, makeDoublingSequence, makeFibonacciLike, makeAlternatingSequence, makeSquareSequence];
+      const built = generators[rand(0, generators.length - 1)]();
+      const distractors = new Set();
+      while(distractors.size < 3){
+        const delta = rand(1, 5) * (Math.random() > 0.5 ? 1 : -1);
+        const val = built.answer + delta;
+        if(val !== built.answer && val >= 0) distractors.add(val);
+      }
+      const options = shuffle([built.answer, ...distractors]);
+      return {seq:built.seq, options, answer:options.indexOf(built.answer), why:built.why};
+    }
+    function buildLevelData(){
+      return {
+        1: sample(oddOneBank, 5).map(buildOddQuestion),
+        2: Array.from({length:5}, () => randomColorRound(false)),
+        3: Array.from({length:5}, () => buildSymmetryQuestion()),
+        4: Array.from({length:5}, () => buildPatternQuestion()),
+        5: [
+          {type:'odd', ...buildOddQuestion(sample(oddOneBank,1)[0]), q:'Hard round 1 · Which is the odd one out?'},
+          {type:'color', text:'Hard round 2 · One square is almost identical. Find it.', ...randomColorRound(true)},
+          {type:'pattern', ...buildPatternQuestion(), q:'Hard round 3 · What comes next?'},
+          {type:'odd', ...buildOddQuestion(sample(oddOneBank,1)[0]), q:'Hard round 4 · Which option breaks the group?'},
+          {type:'pattern', ...buildPatternQuestion(), q:'Hard round 5 · What comes next?'}
+        ]
+      };
+    }
+
+    function refreshRunBadge(){
+    }
+    function startFreshRun(){
+      runData = buildLevelData();
+    }
+    function goHome(){
+      document.getElementById('homeScreen').classList.add('active');
+      document.getElementById('levelScreen').classList.remove('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function getTotal(level){ return (runData[level] || []).length; }
+    function startLevel(level){
+      if(!runData[level]) runData = buildLevelData();
+      currentLevel = level;
+      state = {index:0, score:0, total:getTotal(level), locked:false};
+      document.getElementById('homeScreen').classList.remove('active');
+      document.getElementById('levelScreen').classList.add('active');
+      document.getElementById('levelBadge').textContent = levelMeta[level].title;
+      document.getElementById('levelTitle').textContent = levelMeta[level].title;
+      document.getElementById('levelDesc').textContent = levelMeta[level].desc;
+      updateScoreChip();
+      renderCurrent();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function updateScoreChip(){
+      document.getElementById('scoreChip').textContent = `Progress ${Math.min(state.index, state.total)} / ${state.total} · Score ${state.score}`;
+    }
+    function nextQuestion(){
+      state.index++;
+      state.locked = false;
+      renderCurrent();
+    }
+    function renderCurrent(){
+      updateScoreChip();
+      const area = document.getElementById('gameArea');
+      if(state.index >= state.total){
+        startFreshRun();
+        area.innerHTML = `
+          <div class="completion">
+            <h3>Run complete</h3>
+            <p>You finished <strong>${levelMeta[currentLevel].title}</strong> with a score of <strong>${state.score}/${state.total}</strong>. A new run has already been prepared automatically.</p>
+            <div class="mini-flex">
+              <button class="btn btn-primary" onclick="startLevel(${currentLevel})">Play Again</button>
+              <button class="btn btn-ghost" onclick="goHome()">Back Home</button>
+            </div>
+          </div>`;
+        return;
+      }
+      if(currentLevel===1) renderOddOne(runData[1][state.index]);
+      if(currentLevel===2) renderColorGame(runData[2][state.index]);
+      if(currentLevel===3) renderSymmetry(runData[3][state.index]);
+      if(currentLevel===4) renderPattern(runData[4][state.index]);
+      if(currentLevel===5) renderHard(runData[5][state.index]);
+    }
+    function renderOddOne(item){
+      const area = document.getElementById('gameArea');
+      area.innerHTML = `
+        <div class="question-card">
+          <div class="question">${item.q}</div>
+          <div class="subtle">Freshly shuffled options for this run.</div>
+          <div class="options">
+            ${item.options.map((opt,i)=>`<button class="option" onclick="answerMultipleChoice(${i}, ${item.answer}, ${JSON.stringify(item.why).replace(/"/g,'&quot;')})">${opt}</button>`).join('')}
+          </div>
+          <div id="feedback" class="feedback"></div>
+          <div id="nextRow" class="next-row hidden"><button class="btn btn-primary" onclick="nextQuestion()">Next</button></div>
+        </div>`;
+    }
+    function renderColorGame(config){
+      const total = config.size * config.size;
+      let cells = '';
+      for(let i=0;i<total;i++){
+        cells += `<button class="color-cell" style="background:${i===config.oddIndex ? config.odd : config.base}" onclick="answerColor(${i}, ${config.oddIndex})" aria-label="colour square ${i+1}"></button>`;
+      }
+      const area = document.getElementById('gameArea');
+      area.innerHTML = `
+        <div class="color-grid-wrap">
+          <div class="question">Find the one square with the slightly different colour.</div>
+          <div class="subtle">This grid and colour palette were generated for the current run.</div>
+          <div class="color-grid" style="grid-template-columns:repeat(${config.size}, max-content)">${cells}</div>
+          <div id="feedback" class="feedback"></div>
+          <div id="nextRow" class="next-row hidden"><button class="btn btn-primary" onclick="nextQuestion()">Next</button></div>
+        </div>`;
+    }
+    function shapeGridHTML(pattern){
+      return `<div class="shape-grid">${pattern.join('').split('').map(ch => `<div class="dot-grid ${ch==='1' ? 'on' : ''}"></div>`).join('')}</div>`;
+    }
+    function renderSymmetry(item){
+      const area = document.getElementById('gameArea');
+      area.innerHTML = `
+        <div class="symmetry-wrap">
+          <div class="question">Which pattern is <em>not</em> vertically symmetric?</div>
+          <div class="subtle">Only one card breaks the mirror line.</div>
+          <div class="shape-options">
+            ${item.cards.map((card,i)=>`<button class="shape-card" onclick="answerMultipleChoice(${i}, ${item.answer}, ${JSON.stringify(item.why).replace(/"/g,'&quot;')})">${shapeGridHTML(card.pattern)}<div class="tiny">Option ${i+1}</div></button>`).join('')}
+          </div>
+          <div id="feedback" class="feedback"></div>
+          <div id="nextRow" class="next-row hidden"><button class="btn btn-primary" onclick="nextQuestion()">Next</button></div>
+        </div>`;
+    }
+    function renderPattern(item){
+      const area = document.getElementById('gameArea');
+      area.innerHTML = `
+        <div class="pattern-wrap">
+          <div class="question">${item.q || 'What comes next in the pattern?'}</div>
+          <div class="subtle">Generated sequence for this run — the rule is meant to be logical, not overly mathematical.</div>
+          <div class="pattern-seq">${item.seq.map(n => `<div class="seq-box">${n}</div>`).join('')}<div class="seq-box">?</div></div>
+          <div class="options">
+            ${item.options.map((opt,i)=>`<button class="option" onclick="answerMultipleChoice(${i}, ${item.answer}, ${JSON.stringify(item.why).replace(/"/g,'&quot;')})">${opt}</button>`).join('')}
+          </div>
+          <div id="feedback" class="feedback"></div>
+          <div id="nextRow" class="next-row hidden"><button class="btn btn-primary" onclick="nextQuestion()">Next</button></div>
+        </div>`;
+    }
+    function renderHard(round){
+      if(round.type === 'odd') return renderOddOne(round);
+      if(round.type === 'color') return renderColorGame(round);
+      return renderPattern(round);
+    }
+    function answerMultipleChoice(choice, answer, why){
+      if(state.locked) return;
+      state.locked = true;
+      const options = [...document.querySelectorAll('.option, .shape-card')];
+      if(options[answer]) options[answer].classList.add('correct');
+      if(choice === answer){ state.score++; }
+      else if(options[choice]) { options[choice].classList.add('wrong'); }
+      document.getElementById('feedback').textContent = choice === answer ? `Correct — ${why}` : `Not quite — ${why}`;
+      document.getElementById('nextRow').classList.remove('hidden');
+      updateScoreChip();
+    }
+    function answerColor(choice, answer){
+      if(state.locked) return;
+      state.locked = true;
+      const cells = [...document.querySelectorAll('.color-cell')];
+      if(cells[answer]) cells[answer].style.outline = '4px solid rgba(94,224,139,.95)';
+      if(choice === answer){
+        state.score++;
+        document.getElementById('feedback').textContent = 'Nice spot — you found the odd shade.';
+      } else {
+        if(cells[choice]) cells[choice].style.outline = '4px solid rgba(255,122,122,.95)';
+        document.getElementById('feedback').textContent = 'Close — the green outlined square was the correct answer.';
+      }
+      document.getElementById('nextRow').classList.remove('hidden');
+      updateScoreChip();
+    }
+    startFreshRun();
+  </script>
+</body>
+</html>
