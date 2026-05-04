@@ -7,14 +7,14 @@
   <meta name="description" content="OddOnes is a clean visual puzzle game with fresh randomized rounds every time you play." />
   <style>
     :root{
-      --bg:#07111f;
-      --text:#eef4ff;
-      --muted:#a9b8d4;
-      --line:rgba(255,255,255,.09);
-      --accent:#7d9cff;
-      --accent-2:#62e5c2;
-      --success:#5ee08b;
-      --danger:#ff7a7a;
+      --bg:#101820;
+      --text:#f6efe7;
+      --muted:#c9b9a8;
+      --line:rgba(255,255,255,.10);
+      --accent:#d9a86c;
+      --accent-2:#86d6c4;
+      --success:#8fd6a8;
+      --danger:#f08a7f;
       --shadow:0 18px 60px rgba(0,0,0,.32);
       --shadow-soft:0 10px 28px rgba(0,0,0,.22);
       --max:1220px;
@@ -27,19 +27,28 @@
       font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       color:var(--text);
       background:
-        radial-gradient(circle at top left, rgba(125,156,255,.18), transparent 28%),
-        radial-gradient(circle at top right, rgba(98,229,194,.10), transparent 24%),
-        linear-gradient(180deg, #0a1324 0%, #07111f 42%, #06101c 100%);
+        radial-gradient(circle at top left, rgba(217,168,108,.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(134,214,196,.14), transparent 28%),
+        linear-gradient(180deg, #17212d 0%, #101820 48%, #0c141d 100%);
       overflow-x:hidden;
     }
     .shell{position:relative;max-width:var(--max);margin:0 auto;padding:28px 20px 64px}
     .screen{display:none}
-    .screen.active{display:block}
+    .screen.active{display:block;animation:fadeIn .28s ease both}
+
+    @keyframes fadeIn{
+      from{opacity:0}
+      to{opacity:1}
+    }
+    @keyframes softRise{
+      from{opacity:0;transform:translateY(8px)}
+      to{opacity:1;transform:translateY(0)}
+    }
 
     .nav{
       display:flex;align-items:center;justify-content:space-between;gap:16px;
       padding:12px 14px;border:1px solid var(--line);
-      background:rgba(10,19,36,.56);backdrop-filter:blur(18px);
+      background:rgba(22,32,43,.62);backdrop-filter:blur(18px);
       border-radius:999px;box-shadow:var(--shadow-soft);
       position:sticky;top:16px;z-index:10;
     }
@@ -60,12 +69,12 @@
     .btn,button{
       appearance:none;border:none;font:inherit;cursor:pointer;border-radius:999px;
       padding:14px 22px;font-weight:800;
-      transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+      transition:opacity .15s ease, background .15s ease, border-color .15s ease;
     }
-    .btn:hover,button:hover{transform:translateY(-2px)}
+    .btn:hover,button:hover{opacity:.9}
     .btn-primary{
-      color:#08111f;background:linear-gradient(135deg, var(--accent-2), #b1fff0);
-      box-shadow:0 12px 28px rgba(98,229,194,.22);
+      color:#10201e;background:linear-gradient(135deg, var(--accent-2), #d8fff5);
+      box-shadow:0 12px 28px rgba(134,214,196,.20);
     }
     .btn-secondary,.btn-ghost{
       color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--line);
@@ -76,12 +85,12 @@
     .hero{margin-top:10px;padding:26px 0 6px;text-align:center}
     .eyebrow{
       display:inline-flex;align-items:center;gap:10px;padding:9px 14px;border-radius:999px;
-      background:rgba(255,255,255,.055);border:1px solid var(--line);color:#d7e3ff;font-weight:800;font-size:.88rem;
+      background:rgba(255,255,255,.055);border:1px solid var(--line);color:#f4dcc2;font-weight:800;font-size:.88rem;
       margin-bottom:18px;
     }
     .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 16px var(--accent-2)}
-    h1{margin:0 auto;font-size:clamp(3rem,6vw,5rem);line-height:.94;letter-spacing:-.07em;max-width:760px}
-    .hero-copy{margin:18px auto 0;max-width:760px;font-size:1.08rem;line-height:1.72;color:var(--muted)}
+    h1{margin:0 auto;font-size:clamp(3rem,6vw,5rem);line-height:.94;letter-spacing:-.07em;max-width:760px;animation:softRise .34s ease both}
+    .hero-copy{margin:18px auto 0;max-width:760px;font-size:1.08rem;line-height:1.72;color:var(--muted);animation:softRise .34s ease .06s both}
     .hero-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:24px}
 
     .section{margin-top:24px}
@@ -97,8 +106,14 @@
     }
     .card{
       border-radius:30px;padding:24px 24px 22px;position:relative;overflow:hidden;
-      display:flex;flex-direction:column;min-height:290px;grid-column:span 2;
+      display:flex;flex-direction:column;min-height:245px;grid-column:span 2;
+      animation:softRise .32s ease both;
     }
+    .card:nth-child(2){animation-delay:.04s}
+    .card:nth-child(3){animation-delay:.08s}
+    .card:nth-child(4){animation-delay:.12s}
+    .card:nth-child(5){animation-delay:.16s}
+    .card:hover{border-color:rgba(217,168,108,.28);background:linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.03));}
     .grid > .card:nth-child(4){grid-column:2 / span 2}
     .grid > .card:nth-child(5){grid-column:4 / span 2}
     .card::before{
@@ -115,7 +130,7 @@
     }
     .difficulty{padding:10px 12px;border-radius:999px;font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);color:var(--muted)}
     .card h3{margin:0;font-size:1.7rem;letter-spacing:-.05em;line-height:1.02}
-    .card p{margin:12px 0 18px;color:var(--muted);line-height:1.65;font-size:1rem}
+    .card p{margin:12px 0 0;color:var(--muted);line-height:1.65;font-size:1rem}
     .card ul{margin:0;padding-left:18px;color:#dce7ff;line-height:1.7;font-size:.94rem}
     .card .spacer{flex:1}
     .play-row{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap}
@@ -123,13 +138,13 @@
     .footer-note{margin-top:26px;text-align:center;color:var(--muted);font-size:.95rem}
 
     .back-row{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0 14px}
-    .game-shell{border-radius:34px;padding:28px}
+    .game-shell{border-radius:34px;padding:28px;max-width:980px;margin:0 auto}
     .status-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
     .badge,.score-chip{padding:12px 16px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);font-weight:800;color:#dce7ff}
     .game-title{font-size:clamp(2.2rem,4vw,3.4rem);letter-spacing:-.06em;line-height:.95;margin:0 0 8px}
     .game-desc{margin:0;color:var(--muted);max-width:820px;line-height:1.65}
 
-    .question-card,.color-grid-wrap,.pattern-wrap,.symmetry-wrap{margin-top:24px}
+    .question-card,.color-grid-wrap,.pattern-wrap,.symmetry-wrap{margin-top:24px;text-align:center}
     .question{font-size:clamp(1.5rem,2.8vw,2.25rem);font-weight:900;letter-spacing:-.05em;margin-bottom:16px}
     .subtle{color:var(--muted);font-size:.98rem;line-height:1.6}
     .options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
@@ -140,17 +155,16 @@
     .option:hover,.shape-card:hover{border-color:rgba(125,156,255,.6);background:rgba(255,255,255,.07)}
     .option.correct,.shape-card.correct{border-color:rgba(94,224,139,.75);background:rgba(94,224,139,.12)}
     .option.wrong,.shape-card.wrong{border-color:rgba(255,122,122,.75);background:rgba(255,122,122,.12)}
-    .feedback{min-height:30px;margin-top:18px;font-weight:700;color:#dce7ff}
+    .feedback{min-height:30px;margin-top:18px;font-weight:700;color:#dce7ff;transition:opacity .15s ease}
     .next-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
 
-    .color-grid{display:grid;gap:12px;justify-content:start;margin-top:18px}
-    .color-cell{width:84px;height:84px;border:none;border-radius:22px;cursor:pointer;box-shadow:var(--shadow-soft);transition:transform .16s ease, outline-color .16s ease}
-    .color-cell:hover{transform:scale(1.04)}
+    .color-grid{display:grid;gap:12px;justify-content:center;margin:22px auto 0}
+    .color-cell{width:84px;height:84px;border:none;border-radius:22px;cursor:pointer;box-shadow:var(--shadow-soft);transition:outline-color .15s ease}
 
     .shape-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:18px}
     .shape-grid{display:grid;grid-template-columns:repeat(5,18px);gap:6px;justify-content:center;margin:6px auto 8px}
-    .dot-grid{width:18px;height:18px;border-radius:6px;background:#294264}
-    .dot-grid.on{background:#f2f7ff;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+    .dot-grid{width:18px;height:18px;border-radius:6px;background:#3a4855}
+    .dot-grid.on{background:#fff4e6;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
 
     .pattern-seq{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0}
     .seq-box{min-width:94px;padding:18px 16px;border-radius:22px;text-align:center;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:1.5rem;font-weight:900}
@@ -160,6 +174,13 @@
     .completion p{margin:0;color:var(--muted);line-height:1.7}
     .completion .mini-flex{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
     .hidden{display:none}
+
+
+
+
+    @media (prefers-reduced-motion: reduce){
+      *, *::before, *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    }
 
     @media (max-width:1080px){
       .grid{grid-template-columns:repeat(2,1fr)}
@@ -187,10 +208,7 @@
 
       <section class="hero">
         <h1>OddOnes</h1>
-        <p class="hero-copy">A clean visual puzzle game with replayable levels. The homepage stays simple, each level refreshes automatically when you play again, and the first four game modes each contain five rounds.</p>
-        <div class="hero-actions">
-          <button class="btn btn-primary" onclick="startLevel(1)">Play Level 1</button>
-                  </div>
+        <p class="hero-copy">Pick a level, spot what does not belong, and try to beat your score.</p>
       </section>
 
       <section id="levels" class="section">
@@ -203,48 +221,43 @@
 
         <div class="grid">
           <article class="card">
-            <div class="card-top"><div class="icon">💡</div><div class="difficulty">Warm up</div></div>
+            <div class="card-top"><div class="icon">💡</div></div>
             <h3>Level 1 · The Spark</h3>
             <p>Classic odd-one-out questions with a trickier question bank and shuffled choices every run.</p>
-            <ul><li>5 rounds per run</li><li>Harder category twists</li><li>Shuffled answer positions</li></ul>
             <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(1)">Play Level 1</button></div>
           </article>
 
           <article class="card">
-            <div class="card-top"><div class="icon">🎨</div><div class="difficulty">Focus</div></div>
+            <div class="card-top"><div class="icon">🎨</div></div>
             <h3>Level 2 · Pixel Hunter</h3>
             <p>Subtle colour-difference puzzles that are a little easier to read while still feeling fun.</p>
-            <ul><li>5 rounds per run</li><li>Fairer colour contrast</li><li>Random grid positions</li></ul>
             <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(2)">Play Level 2</button></div>
           </article>
 
           <article class="card">
-            <div class="card-top"><div class="icon">🧩</div><div class="difficulty">Spatial</div></div>
+            <div class="card-top"><div class="icon">🧩</div></div>
             <h3>Level 3 · Shape Shifter</h3>
             <p>Symmetry-based logic cards now run across five rounds with a larger set of patterns.</p>
-            <ul><li>5 rounds per run</li><li>Fresh pattern selection</li><li>Randomized correct slot</li></ul>
             <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(3)">Play Level 3</button></div>
           </article>
 
           <article class="card">
-            <div class="card-top"><div class="icon">🧠</div><div class="difficulty">Logic</div></div>
+            <div class="card-top"><div class="icon">🧠</div></div>
             <h3>Level 4 · Logic Legend</h3>
             <p>Sequence rounds now use simpler logic patterns across five rounds without heavy maths.</p>
-            <ul><li>5 rounds per run</li><li>Cleaner sequence rules</li><li>Less punishing maths</li></ul>
             <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(4)">Play Level 4</button></div>
           </article>
 
           <article class="card">
-            <div class="card-top"><div class="icon">🏆</div><div class="difficulty">Boss level</div></div>
+            <div class="card-top"><div class="icon">🏆</div></div>
             <h3>Level 5 · Ultimate OddOne</h3>
             <p>A mixed final run with extra rounds, tighter colour reads, and harder combinations.</p>
-            <ul><li>5 mixed rounds</li><li>Fresh hard questions</li><li>Built for replayability</li></ul>
             <div class="spacer"></div><div class="play-row"><button class="btn btn-primary" onclick="startLevel(5)">Play Level 5</button></div>
           </article>
         </div>
       </section>
 
-      <div class="footer-note">Created for Malachy Thurtell · Discord: mooskimal_78612</div>
+      <div class="footer-note">Created by Malachy Thurtell · Discord: mooskimal_78612</div>
     </div>
 
     <div id="levelScreen" class="screen">
@@ -263,11 +276,11 @@
 
   <script>
     const levelMeta = {
-      1: {title:'Level 1 · The Spark', desc:'Five odd-one-out rounds with randomized questions and shuffled answers every time you begin.'},
-      2: {title:'Level 2 · Pixel Hunter', desc:'Five colour-difference grids with fairer contrast and new odd-square positions each run.'},
-      3: {title:'Level 3 · Shape Shifter', desc:'Five symmetry puzzles that rotate through a larger set and randomize the display order every playthrough.'},
-      4: {title:'Level 4 · Logic Legend', desc:'Five cleaner sequence puzzles with less heavy maths and a new logic path whenever you restart.'},
-      5: {title:'Level 5 · Ultimate OddOne', desc:'A mixed final challenge with five harder rounds combining multiple puzzle types in a replayable boss run.'}
+      1: {title:'Level 1 · The Spark', desc:'Find the odd one out.'},
+      2: {title:'Level 2 · Pixel Hunter', desc:'Spot the different colour.'},
+      3: {title:'Level 3 · Shape Shifter', desc:'Find the pattern that is not symmetrical.'},
+      4: {title:'Level 4 · Logic Legend', desc:'Complete the sequence.'},
+      5: {title:'Level 5 · Ultimate OddOne', desc:'Take on a mix of every challenge.'}
     };
 
     const oddOneBank = [
@@ -286,8 +299,175 @@
       {q:'Which is the odd one out?', options:['Run','Jog','Sprint','Sit'], answer:3, why:'Sit is not a running movement. The others are all forms of running.'},
       {q:'Which is the odd one out?', options:['Mercury','Iron','Copper','Silver'], answer:0, why:'Mercury is the only one that is liquid at room temperature. The others are solid metals.'},
       {q:'Which is the odd one out?', options:['USB‑C','HDMI','Ethernet','Notebook'], answer:3, why:'Notebook is not a cable or connection type. The others are connectors or interfaces.'},
-      {q:'Which is the odd one out?', options:['Chrome','Safari','Firefox','Spotify'], answer:3, why:'Spotify is a streaming app. The others are web browsers.'}
+      {q:'Which is the odd one out?', options:['Chrome','Safari','Firefox','Spotify'], answer:3, why:'Spotify is a streaming app. The others are web browsers.'},
+      {q:'Which is the odd one out?', options:['Oxygen','Hydrogen','Carbon','Water'], answer:3, why:'Water is a compound. The others are elements.'},
+      {q:'Which is the odd one out?', options:['Red','Blue','Green','Circle'], answer:3, why:'Circle is a shape. The others are colours.'},
+      {q:'Which is the odd one out?', options:['Guitar','Piano','Drums','Microphone'], answer:3, why:'A microphone records or amplifies sound. The others are instruments you play.'},
+      {q:'Which is the odd one out?', options:['Monday','Tuesday','July','Friday'], answer:2, why:'July is a month. The others are days of the week.'},
+      {q:'Which is the odd one out?', options:['Dog','Cat','Rabbit','Eagle'], answer:3, why:'Eagle is a bird. The others are mammals commonly kept as pets.'},
+      {q:'Which is the odd one out?', options:['Hammer','Screwdriver','Wrench','Candle'], answer:3, why:'Candle is not a tool. The others are tools.'},
+      {q:'Which is the odd one out?', options:['Apple','Banana','Carrot','Mango'], answer:2, why:'Carrot is a vegetable. The others are fruits.'},
+      {q:'Which is the odd one out?', options:['Soccer','Basketball','Tennis','Laptop'], answer:3, why:'Laptop is technology. The others are sports.'},
+      {q:'Which is the odd one out?', options:['Gold','Silver','Bronze','Plastic'], answer:3, why:'Plastic is not a metal. The others are metals or alloys.'},
+      {q:'Which is the odd one out?', options:['Bus','Train','Ferry','Toaster'], answer:3, why:'Toaster is an appliance. The others are transport.'},
+      {q:'Which is the odd one out?', options:['Sun','Moon','Star','Chair'], answer:3, why:'Chair is furniture. The others are objects in space.'},
+      {q:'Which is the odd one out?', options:['Email','Text message','Phone call','Pillow'], answer:3, why:'Pillow is not communication. The others are ways to communicate.'},
+      {q:'Which is the odd one out?', options:['Password','PIN','Fingerprint','Pizza'], answer:3, why:'Pizza is food. The others can be used for authentication.'},
+      {q:'Which is the odd one out?', options:['Kilogram','Metre','Litre','Netflix'], answer:3, why:'Netflix is a streaming service. The others are units of measurement.'},
+      {q:'Which is the odd one out?', options:['HTTP','HTTPS','FTP','Banana'], answer:3, why:'Banana is food. The others are internet/network protocols.'},
+      {q:'Which is the odd one out?', options:['2','4','8','9'], answer:3, why:'9 is odd. The others are even numbers.'},
+      {q:'Which is the odd one out?', options:['3','5','7','8'], answer:3, why:'8 is even. The others are odd prime numbers.'},
+      {q:'Which is the odd one out?', options:['4','9','16','21'], answer:3, why:'21 is not a square number. The others are square numbers.'},
+      {q:'Which is the odd one out?', options:['10','20','30','45'], answer:3, why:'45 is not a multiple of 10. The others are.'},
+      {q:'Which is the odd one out?', options:['1/2','2/4','3/6','3/5'], answer:3, why:'3/5 is not equal to one half. The others are.'},
+      {q:'Which is the odd one out?', options:['90°','Right angle','Quarter turn','Straight angle'], answer:3, why:'A straight angle is 180°. The others describe 90°.'},
+      {q:'Which is the odd one out?', options:['Addition','Subtraction','Multiplication','Sandwich'], answer:3, why:'Sandwich is food. The others are math operations.'},
+      {q:'Which is the odd one out?', options:['LAN','WAN','WLAN','Pencil'], answer:3, why:'Pencil is stationery. The others are network types.'},
+      {q:'Which is the odd one out?', options:['Malware','Phishing','Ransomware','Headphones'], answer:3, why:'Headphones are hardware. The others are cyber security threats.'},
+      {q:'Which is the odd one out?', options:['Database','Table','Column','Skateboard'], answer:3, why:'Skateboard is not part of a database structure.'},
+      {q:'Which is the odd one out?', options:['Primary key','Foreign key','Candidate key','House key'], answer:3, why:'House key is physical. The others are database key concepts.'},
+      {q:'Which is the odd one out?', options:['AND','OR','NOT','Maybe'], answer:3, why:'Maybe is not a logic gate/operator. The others are.'},
+      {q:'Which is the odd one out?', options:['True','False','Boolean','Backpack'], answer:3, why:'Backpack is an object. The others relate to Boolean logic.'},
+      {q:'Which is the odd one out?', options:['Mouse','Keyboard','Monitor','Banana peel'], answer:3, why:'Banana peel is not computer hardware.'},
+      {q:'Which is the odd one out?', options:['RAM','ROM','Cache','Chocolate'], answer:3, why:'Chocolate is food. The others are types of computer memory.'},
+      {q:'Which is the odd one out?', options:['Windows','macOS','Linux','Microwave'], answer:3, why:'Microwave is an appliance. The others are operating systems.'},
+      {q:'Which is the odd one out?', options:['iPhone','Samsung Galaxy','Google Pixel','Calculator'], answer:3, why:'Calculator is not a smartphone model/line.'},
+      {q:'Which is the odd one out?', options:['North','South','East','Inside'], answer:3, why:'Inside is not a compass direction. The others are.'},
+      {q:'Which is the odd one out?', options:['Spring','Summer','Autumn','January'], answer:3, why:'January is a month. The others are seasons.'},
+      {q:'Which is the odd one out?', options:['Circle','Square','Triangle','Thursday'], answer:3, why:'Thursday is a day. The others are shapes.'},
+      {q:'Which is the odd one out?', options:['Doctor','Nurse','Surgeon','Volcano'], answer:3, why:'Volcano is a natural feature. The others are healthcare roles.'},
+      {q:'Which is the odd one out?', options:['Cloud','Rain','Thunder','USB cable'], answer:3, why:'USB cable is technology. The others relate to weather.'},
+      {q:'Which is the odd one out?', options:['Bread','Rice','Pasta','Bluetooth'], answer:3, why:'Bluetooth is technology. The others are foods.'},
+      {q:'Which is the odd one out?', options:['Pen','Pencil','Marker','Keyboard'], answer:3, why:'Keyboard is a computer input device. The others are writing tools.'},
+      {q:'Which is the odd one out?', options:['Earth','Mars','Jupiter','Australia'], answer:3, why:'Australia is a country/continent. The others are planets.'},
+      {q:'Which is the odd one out?', options:['Whale','Shark','Dolphin','Kangaroo'], answer:3, why:'Kangaroo is a land animal. The others live in the ocean.'},
+      {q:'Which is the odd one out?', options:['Violin','Cello','Trumpet','Printer'], answer:3, why:'Printer is technology. The others are musical instruments.'},
+      {q:'Which is the odd one out?', options:['Square','Rectangle','Circle','Keyboard'], answer:3, why:'Keyboard is hardware. The others are shapes.'},
+      {q:'Which is the odd one out?', options:['Copper','Aluminium','Iron','Cloud'], answer:3, why:'Cloud is not a metal. The others are metals.'},
+      {q:'Which is the odd one out?', options:['Circle','Sphere','Cube','Banana'], answer:3, why:'Banana is food. The others are geometric forms.'},
+      {q:'Which is the odd one out?', options:['Encryption','Firewall','Antivirus','Toothbrush'], answer:3, why:'Toothbrush is not a cyber security protection.'},
+      {q:'Which is the odd one out?', options:['Laptop','Desktop','Tablet','Cereal'], answer:3, why:'Cereal is food. The others are computing devices.'},
+      {q:'Which is the odd one out?', options:['Reddit','Discord','Instagram','Spoon'], answer:3, why:'Spoon is cutlery. The others are online platforms/apps.'},
+      {q:'Which is the odd one out?', options:['HTML tag','CSS selector','JavaScript function','Water bottle'], answer:3, why:'Water bottle is not part of web development.'},
+      {q:'Which is the odd one out?', options:['Australia','Canada','Japan','Saturn'], answer:3, why:'Saturn is a planet. The others are countries.'},
+      {q:'Which is the odd one out?', options:['CPU','GPU','Motherboard','Tennis ball'], answer:3, why:'Tennis ball is sports equipment. The others are computer parts.'},
+      {q:'Which is the odd one out?', options:['Knife','Fork','Spoon','Router'], answer:3, why:'Router is networking hardware. The others are cutlery.'},
+      {q:'Which is the odd one out?', options:['PDF','DOCX','TXT','Basketball'], answer:3, why:'Basketball is a sport/object. The others are document file types.'},
+      {q:'Which is the odd one out?', options:['12','18','24','25'], answer:3, why:'25 is not divisible by 6. The others are.'},
+      {q:'Which is the odd one out?', options:['15','21','27','34'], answer:3, why:'34 is not a multiple of 3. The others are.'},
+      {q:'Which is the odd one out?', options:['2','3','5','9'], answer:3, why:'9 is not a prime number. The others are prime.'},
+      {q:'Which is the odd one out?', options:['11','13','17','21'], answer:3, why:'21 is not prime. The others are prime numbers.'},
+      {q:'Which is the odd one out?', options:['64','81','100','120'], answer:3, why:'120 is not a square number. The others are square numbers.'},
+      {q:'Which is the odd one out?', options:['8','27','64','100'], answer:3, why:'100 is not a cube number. The others are cubes.'},
+      {q:'Which is the odd one out?', options:['2/3','4/6','6/9','5/8'], answer:3, why:'5/8 is not equivalent to 2/3. The others are.'},
+      {q:'Which is the odd one out?', options:['0.25','1/4','25%','0.4'], answer:3, why:'0.4 is not equal to one quarter. The others are.'},
+      {q:'Which is the odd one out?', options:['0.75','3/4','75%','2/5'], answer:3, why:'2/5 equals 40%. The others equal 75%.'},
+      {q:'Which is the odd one out?', options:['Mean','Median','Mode','Metre'], answer:3, why:'Metre is a unit of length. The others are averages/statistics terms.'},
+      {q:'Which is the odd one out?', options:['Radius','Diameter','Circumference','Keyboard'], answer:3, why:'Keyboard is not part of circle geometry.'},
+      {q:'Which is the odd one out?', options:['Hypotenuse','Opposite','Adjacent','Router'], answer:3, why:'Router is not a triangle/trigonometry term.'},
+      {q:'Which is the odd one out?', options:['Acute','Obtuse','Reflex','Laptop'], answer:3, why:'Laptop is not an angle type.'},
+      {q:'Which is the odd one out?', options:['Scalene','Isosceles','Equilateral','Hexagon'], answer:3, why:'Hexagon is not a triangle type.'},
+      {q:'Which is the odd one out?', options:['Kilobyte','Megabyte','Gigabyte','Kilometre'], answer:3, why:'Kilometre measures distance. The others measure digital storage.'},
+      {q:'Which is the odd one out?', options:['Bit','Byte','Nibble','Newton'], answer:3, why:'Newton is a unit of force. The others are data size terms.'},
+      {q:'Which is the odd one out?', options:['HTTP','DNS','IP','Piano'], answer:3, why:'Piano is an instrument. The others are internet/networking terms.'},
+      {q:'Which is the odd one out?', options:['TCP','UDP','ICMP','JPEG'], answer:3, why:'JPEG is an image format. The others are networking protocols.'},
+      {q:'Which is the odd one out?', options:['Phishing','Spoofing','Keylogging','Cooking'], answer:3, why:'Cooking is not a cyber attack method.'},
+      {q:'Which is the odd one out?', options:['Hashing','Encryption','Authentication','Sandwich'], answer:3, why:'Sandwich is food. The others are security concepts.'},
+      {q:'Which is the odd one out?', options:['Confidentiality','Integrity','Availability','Humidity'], answer:3, why:'Humidity is weather-related. The others are the CIA triad in cyber security.'},
+      {q:'Which is the odd one out?', options:['SELECT','INSERT','UPDATE','Photoshop'], answer:3, why:'Photoshop is software. The others are SQL commands.'},
+      {q:'Which is the odd one out?', options:['Entity','Attribute','Relationship','Microwave'], answer:3, why:'Microwave is not a database modelling concept.'},
+      {q:'Which is the odd one out?', options:['Primary key','Foreign key','Composite key','Door key'], answer:3, why:'Door key is physical. The others are database keys.'},
+      {q:'Which is the odd one out?', options:['VARCHAR','INTEGER','BOOLEAN','Instagram'], answer:3, why:'Instagram is an app. The others are data types.'},
+      {q:'Which is the odd one out?', options:['AND','NAND','XOR','HTML'], answer:3, why:'HTML is a markup language. The others are logic gates.'},
+      {q:'Which is the odd one out?', options:['Input','Output','Truth table','Netflix'], answer:3, why:'Netflix is not a digital logic concept.'},
+      {q:'Which is the odd one out?', options:['Half adder','Full adder','Multiplexer','Toothpaste'], answer:3, why:'Toothpaste is not a digital circuit component.'},
+      {q:'Which is the odd one out?', options:['Stack','Queue','Array','Cereal'], answer:3, why:'Cereal is food. The others are data structures.'},
+      {q:'Which is the odd one out?', options:['For loop','While loop','Do-while loop','Swimming pool'], answer:3, why:'Swimming pool is not a programming loop.'},
+      {q:'Which is the odd one out?', options:['Class','Object','Method','Volcano'], answer:3, why:'Volcano is not an object-oriented programming term.'},
+      {q:'Which is the odd one out?', options:['Inheritance','Polymorphism','Encapsulation','Bluetooth speaker'], answer:3, why:'Bluetooth speaker is hardware. The others are OOP concepts.'},
+      {q:'Which is the odd one out?', options:['Evaporation','Condensation','Precipitation','Keyboard shortcut'], answer:3, why:'Keyboard shortcut is not part of the water cycle.'},
+      {q:'Which is the odd one out?', options:['Solid','Liquid','Gas','Rectangle'], answer:3, why:'Rectangle is a shape. The others are states of matter.'},
+      {q:'Which is the odd one out?', options:['Proton','Neutron','Electron','Calendar'], answer:3, why:'Calendar is not a subatomic particle.'},
+      {q:'Which is the odd one out?', options:['Mitochondria','Nucleus','Ribosome','Router'], answer:3, why:'Router is networking hardware. The others are cell biology terms.'},
+      {q:'Which is the odd one out?', options:['Photosynthesis','Respiration','Diffusion','Headphones'], answer:3, why:'Headphones are not a biological process.'},
+      {q:'Which is the odd one out?', options:['Mercury','Venus','Earth','Pluto'], answer:3, why:'Pluto is classified as a dwarf planet. The others are planets.'},
+      {q:'Which is the odd one out?', options:['Saturn','Jupiter','Uranus','Mars'], answer:3, why:'Mars is a rocky terrestrial planet. The others are giant outer planets.'},
+      {q:'Which is the odd one out?', options:['Orion','Scorpius','Crux','Microwave'], answer:3, why:'Microwave is an appliance. The others are constellations.'},
+      {q:'Which is the odd one out?', options:['Metaphor','Simile','Personification','Keyboard'], answer:3, why:'Keyboard is not a language technique.'},
+      {q:'Which is the odd one out?', options:['Noun','Verb','Adjective','Triangle'], answer:3, why:'Triangle is not a part of speech.'},
+      {q:'Which is the odd one out?', options:['Alliteration','Onomatopoeia','Hyperbole','Ethernet'], answer:3, why:'Ethernet is a networking technology. The others are language devices.'},
+      {q:'Which is the odd one out?', options:['Democracy','Monarchy','Dictatorship','Spreadsheet'], answer:3, why:'Spreadsheet is software. The others are forms of government.'},
+      {q:'Which is the odd one out?', options:['Inflation','Interest rate','Exchange rate','Screwdriver'], answer:3, why:'Screwdriver is a tool. The others are economic terms.'},
+      {q:'Which is the odd one out?', options:['Revenue','Profit','Expense','Rectangle'], answer:3, why:'Rectangle is a shape. The others are business/accounting terms.'},
+      {q:'Which is the odd one out?', options:['Latitude','Longitude','Equator','JavaScript'], answer:3, why:'JavaScript is a programming language. The others are geography terms.'},
+      {q:'Which is the odd one out?', options:['Archipelago','Peninsula','Isthmus','Password'], answer:3, why:'Password is not a landform/geography term.'},
+      {q:'Which is the odd one out?', options:['Canberra','Ottawa','Wellington','Sydney'], answer:3, why:'Sydney is not a national capital. The others are capital cities.'},
+      {q:'Which is the odd one out?', options:['Tokyo','Paris','Rome','Queensland'], answer:3, why:'Queensland is a state. The others are cities.'},
+      {q:'Which is the odd one out?', options:['Aorta','Vena cava','Pulmonary artery','USB-C'], answer:3, why:'USB-C is a connector. The others are blood vessels.'},
+      {q:'Which is the odd one out?', options:['Femur','Tibia','Humerus','Firewall'], answer:3, why:'Firewall is a security system. The others are bones.'},
+      {q:'Which is the odd one out?', options:['Lens','Retina','Cornea','Database'], answer:3, why:'Database is not part of the eye.'},
+      {q:'Which is the odd one out?', options:['Bass','Treble','Tempo','Router'], answer:3, why:'Router is not a music term.'},
+      {q:'Which is the odd one out?', options:['Crescendo','Melody','Rhythm','Spreadsheet'], answer:3, why:'Spreadsheet is software. The others are music terms.'},
+      {q:'Which is the odd one out?', options:['Penalty','Offside','Corner kick','Algorithm'], answer:3, why:'Algorithm is not a soccer term.'},
+      {q:'Which is the odd one out?', options:['Serve','Rally','Deuce','Volcano'], answer:3, why:'Volcano is not a tennis term.'},
+      {q:'Which is the odd one out?', options:['Script','Storyboard','Scene','Submarine'], answer:3, why:'Submarine is a vehicle. The others are film/media terms.'},
+      {q:'Which is the odd one out?', options:['Iteration','Feedback','Prototype','Forklift'], answer:3, why:'Forklift is not part of a design/development process.'},
+      {q:'Which is the odd one out?', options:['User interface','User experience','Accessibility','Toaster'], answer:3, why:'Toaster is an appliance. The others are design concepts.'},
+      {q:'Which is the odd one out?', options:['2, 4, 6','3, 6, 9','5, 10, 15','7, 10, 14'], answer:3, why:'7, 10, 14 does not increase by the same amount each step. The others do.'},
+      {q:'Which is the odd one out?', options:['1, 2, 4, 8','3, 6, 12, 24','5, 10, 20, 40','2, 5, 10, 20'], answer:3, why:'2, 5, 10, 20 does not double from the first term. The others do.'},
+      {q:'Which is the odd one out?', options:['A, C, E','B, D, F','M, O, Q','P, Q, S'], answer:3, why:'P, Q, S does not skip one letter each time. The others do.'},
+      {q:'Which is the odd one out?', options:['Circle has no corners','Triangle has 3 sides','Square has 4 sides','Hexagon has 7 sides'], answer:3, why:'A hexagon has 6 sides, not 7.'},
+      {q:'Which is the odd one out?', options:['5 + 5 = 10','6 × 2 = 12','18 ÷ 3 = 6','7 × 3 = 20'], answer:3, why:'7 × 3 equals 21, not 20.'},
+      {q:'Which is the odd one out?', options:['9 - 4 = 5','8 + 6 = 14','3 × 7 = 21','16 ÷ 4 = 5'], answer:3, why:'16 ÷ 4 equals 4, not 5.'}
     ];
+
+    const hardLevelOneBank = [
+      {q:'Which is the odd one out?', options:['Denmark','Norway','Sweden','Finland'], answer:3, why:'Finland is Nordic, but it is not Scandinavian in the strict geographic/cultural sense. The others are Scandinavian countries.'},
+      {q:'Which is the odd one out?', options:['Madrid','Rome','Berlin','Lisbon'], answer:2, why:'Berlin is the only one that is not in Southern Europe. The others are southern European capitals.'},
+      {q:'Which is the odd one out?', options:['Mercury','Venus','Earth','Neptune'], answer:3, why:'Neptune is a gas/ice giant outer planet. The others are rocky inner planets.'},
+      {q:'Which is the odd one out?', options:['C','Java','Python','HTML'], answer:3, why:'HTML is a markup language. The others are programming languages.'},
+      {q:'Which is the odd one out?', options:['HTTP','FTP','SMTP','HTML'], answer:3, why:'HTML is a markup language. The others are communication protocols.'},
+      {q:'Which is the odd one out?', options:['TCP','UDP','IP','SQL'], answer:3, why:'SQL is a database language. The others are networking protocols.'},
+      {q:'Which is the odd one out?', options:['Primary key','Foreign key','Composite key','Candidate key'], answer:1, why:'A foreign key references another table. The others can identify records within a table.'},
+      {q:'Which is the odd one out?', options:['SELECT','WHERE','FROM','TABLE'], answer:3, why:'TABLE is not normally part of a basic SELECT query. SELECT, WHERE, and FROM are query clauses/keywords.'},
+      {q:'Which is the odd one out?', options:['1NF','2NF','3NF','ERD'], answer:3, why:'ERD is a diagram/model. The others are database normal forms.'},
+      {q:'Which is the odd one out?', options:['AND','NAND','OR','NOR'], answer:0, why:'AND is not a universal gate. NAND and NOR are universal gates, and OR is paired with NOR.'},
+      {q:'Which is the odd one out?', options:['XOR','XNOR','AND','NOT'], answer:2, why:'AND is not directly about equality/difference. XOR and XNOR compare difference/sameness, and NOT inverts logic.'},
+      {q:'Which is the odd one out?', options:['Half adder','Full adder','Binary adder','Decoder'], answer:3, why:'A decoder selects/activates outputs. The others are used for addition.'},
+      {q:'Which is the odd one out?', options:['RAM','Cache','Register','SSD'], answer:3, why:'SSD is long-term storage. The others are volatile/fast memory used while processing.'},
+      {q:'Which is the odd one out?', options:['Compiler','Interpreter','Assembler','Router'], answer:3, why:'Router is networking hardware. The others translate or run code.'},
+      {q:'Which is the odd one out?', options:['Array','List','Stack','Integer'], answer:3, why:'Integer is a data type. The others are data structures.'},
+      {q:'Which is the odd one out?', options:['Class','Object','Constructor','Loop'], answer:3, why:'Loop is a control structure. The others are object-oriented programming ideas.'},
+      {q:'Which is the odd one out?', options:['Encapsulation','Inheritance','Polymorphism','Recursion'], answer:3, why:'Recursion is a programming technique. The others are major OOP principles.'},
+      {q:'Which is the odd one out?', options:['Phishing','Vishing','Smishing','Hashing'], answer:3, why:'Hashing is a security process. The others are social engineering attack types.'},
+      {q:'Which is the odd one out?', options:['Confidentiality','Integrity','Availability','Authentication'], answer:3, why:'Authentication is important, but it is not one of the three CIA triad principles.'},
+      {q:'Which is the odd one out?', options:['Symmetric encryption','Asymmetric encryption','Hashing','Firewall'], answer:3, why:'Firewall is a network/security control. The others transform data cryptographically.'},
+      {q:'Which is the odd one out?', options:['2','3','5','9'], answer:3, why:'9 is not prime. The others are prime numbers.'},
+      {q:'Which is the odd one out?', options:['16','25','36','45'], answer:3, why:'45 is not a square number. The others are square numbers.'},
+      {q:'Which is the odd one out?', options:['8','27','64','81'], answer:3, why:'81 is not a cube number. The others are cube numbers.'},
+      {q:'Which is the odd one out?', options:['1/2','0.5','50%','1/3'], answer:3, why:'1/3 is not equal to one half. The others all mean 0.5.'},
+      {q:'Which is the odd one out?', options:['3, 6, 9','4, 8, 12','5, 10, 15','6, 11, 17'], answer:3, why:'6, 11, 17 does not increase by the same amount. The others add a constant step.'},
+      {q:'Which is the odd one out?', options:['2, 4, 8, 16','3, 6, 12, 24','4, 8, 16, 32','5, 10, 15, 30'], answer:3, why:'5, 10, 15, 30 does not double each time. The others do.'},
+      {q:'Which is the odd one out?', options:['A, C, E','D, F, H','M, O, Q','R, T, W'], answer:3, why:'R, T, W does not skip exactly one letter each step. The others do.'},
+      {q:'Which is the odd one out?', options:['Dog','Cat','Horse','Shark'], answer:3, why:'Shark is not a mammal. The others are mammals.'},
+      {q:'Which is the odd one out?', options:['Whale','Dolphin','Seal','Tuna'], answer:3, why:'Tuna is a fish. The others are mammals.'},
+      {q:'Which is the odd one out?', options:['Eagle','Falcon','Hawk','Bat'], answer:3, why:'Bat can fly, but it is a mammal. The others are birds.'},
+      {q:'Which is the odd one out?', options:['Violin','Viola','Cello','Trumpet'], answer:3, why:'Trumpet is a brass instrument. The others are string instruments.'},
+      {q:'Which is the odd one out?', options:['Soprano','Alto','Tenor','Tempo'], answer:3, why:'Tempo is speed. The others are vocal ranges.'},
+      {q:'Which is the odd one out?', options:['Metaphor','Simile','Alliteration','Paragraph'], answer:3, why:'Paragraph is a text structure. The others are language techniques.'},
+      {q:'Which is the odd one out?', options:['Noun','Verb','Adjective','Metaphor'], answer:3, why:'Metaphor is a language technique. The others are parts of speech.'},
+      {q:'Which is the odd one out?', options:['Mean','Median','Mode','Range'], answer:3, why:'Range measures spread. The others are measures of central tendency.'},
+      {q:'Which is the odd one out?', options:['Radius','Diameter','Chord','Volume'], answer:3, why:'Volume is a 3D measure. The others are circle line/length terms.'},
+      {q:'Which is the odd one out?', options:['Acute','Obtuse','Right','Parallel'], answer:3, why:'Parallel describes lines. The others describe angles.'},
+      {q:'Which is the odd one out?', options:['Solid','Liquid','Gas','Density'], answer:3, why:'Density is a property of matter. The others are states of matter.'},
+      {q:'Which is the odd one out?', options:['Proton','Neutron','Electron','Molecule'], answer:3, why:'Molecule is made of atoms. The others are subatomic particles.'},
+      {q:'Which is the odd one out?', options:['Evaporation','Condensation','Freezing','Gravity'], answer:3, why:'Gravity is a force. The others are changes of state.'},
+      {q:'Which is the odd one out?', options:['Producer','Consumer','Decomposer','Predator'], answer:3, why:'Predator is a feeding role, but producer/consumer/decomposer are the main ecosystem energy categories.'},
+      {q:'Which is the odd one out?', options:['Canberra','Ottawa','Wellington','New York'], answer:3, why:'New York is not a national capital. The others are.'},
+      {q:'Which is the odd one out?', options:['Latitude','Longitude','Equator','Altitude'], answer:3, why:'Altitude is height above sea level. The others are coordinate/global position lines or references.'},
+      {q:'Which is the odd one out?', options:['Archipelago','Peninsula','Isthmus','Equator'], answer:3, why:'Equator is an imaginary line. The others are landform/geography terms.'}
+    ];
+
 
     const symmetricPatterns = [
       ['00100','01110','11111','01010','10001'],
@@ -337,15 +517,31 @@
       return rgbToHex(r + amount, g + amount, b + amount);
     }
     function randomBaseColor(){
-      const palettes = ['#6f86d8','#8099d8','#7d92cd','#8ea37e','#c58fa2','#728ecf','#6a8ab0','#9f86c8','#7ea8a1','#b18cbc'];
+      const palettes = [
+        '#6f86d8','#8099d8','#7d92cd','#8ea37e','#c58fa2','#728ecf','#6a8ab0','#9f86c8','#7ea8a1','#b18cbc',
+        '#4f8f7f','#7b6fd8','#b7796d','#6aa0b8','#b8a86a','#a46ab8','#5f9e6e','#b86a88','#6b7fb8','#9b7a5f',
+        '#4d6f8f','#8f5f6d','#5f8f75','#8f7f4d','#7f5f8f','#5f7f8f','#8f6f5f','#6f8f5f','#8f5f7f','#5f6f8f',
+        '#3f6f72','#725f8f','#8f725f','#5f8f8a','#8f8a5f','#7a8f5f','#8f5f5f','#5f728f','#6a8f72','#8a6a8f',
+        '#557c99','#997c55','#559977','#995577','#775599','#997755','#559999','#995555','#669955','#556699'
+      ];
       return palettes[rand(0, palettes.length - 1)];
     }
     function randomColorRound(forceHard=false){
-      const size = forceHard ? 4 : (Math.random() > 0.72 ? 4 : 3);
+      const size = forceHard ? (Math.random() > 0.35 ? 4 : 5) : (Math.random() > 0.45 ? 4 : 3);
       const base = randomBaseColor();
-      const amount = forceHard ? rand(8,12) : rand(14,20);
-      const diff = amount * (Math.random() > 0.5 ? 1 : -1);
-      const odd = shiftColor(base, diff);
+      const amount = forceHard ? rand(6,9) : rand(7,12);
+      const channels = [
+        [amount, amount, amount],
+        [amount, 0, 0],
+        [0, amount, 0],
+        [0, 0, amount],
+        [amount, amount, 0],
+        [0, amount, amount],
+        [amount, 0, amount]
+      ];
+      const chosen = channels[rand(0, channels.length - 1)].map(v => v * (Math.random() > 0.5 ? 1 : -1));
+      const {r,g,b} = hexToRgb(base);
+      const odd = rgbToHex(r + chosen[0], g + chosen[1], b + chosen[2]);
       const total = size * size;
       return {size, base, odd, oddIndex: rand(0, total - 1)};
     }
@@ -370,38 +566,88 @@
       };
     }
     function makeArithmeticSequence(){
-      const start = rand(1, 14);
-      const step = rand(2, 4);
+      const start = rand(1, 20);
+      const step = rand(2, 8);
       return {seq:[start,start+step,start+step*2,start+step*3], answer:start+step*4, why:`The sequence adds ${step} each time.`};
     }
+    function makeSubtractionSequence(){
+      const step = rand(2, 7);
+      const start = rand(30, 70);
+      return {seq:[start,start-step,start-step*2,start-step*3], answer:start-step*4, why:`The sequence subtracts ${step} each time.`};
+    }
     function makeDoublingSequence(){
-      const start = rand(1, 3) * 2;
+      const start = rand(1, 5);
       return {seq:[start,start*2,start*4,start*8], answer:start*16, why:'Each number doubles.'};
     }
+    function makeTriplingSequence(){
+      const start = rand(1, 4);
+      return {seq:[start,start*3,start*9,start*27], answer:start*81, why:'Each number is multiplied by 3.'};
+    }
     function makeFibonacciLike(){
-      const a = rand(1, 3);
-      const b = rand(1, 4);
+      const a = rand(1, 5);
+      const b = rand(1, 6);
       const c = a + b;
       const d = b + c;
       const e = c + d;
       return {seq:[a,b,c,d,e], answer:d + e, why:'Each term is the sum of the previous two.'};
     }
     function makeAlternatingSequence(){
-      const a = rand(4, 12);
-      const up = rand(2, 4);
-      const down = 1;
+      const a = rand(4, 18);
+      const up = rand(2, 7);
+      const down = rand(1, 3);
       return {seq:[a,a+up,a+up-down,a+2*up-down], answer:a+2*up-2*down, why:`The pattern alternates: +${up}, -${down}, +${up}, so next is -${down}.`};
     }
     function makeSquareSequence(){
-      const n = rand(1,3);
+      const n = rand(1,5);
       return {seq:[n*n,(n+1)*(n+1),(n+2)*(n+2),(n+3)*(n+3)], answer:(n+4)*(n+4), why:'These are consecutive square numbers.'};
     }
+    function makeCubeSequence(){
+      const n = rand(1,3);
+      return {seq:[n**3,(n+1)**3,(n+2)**3,(n+3)**3], answer:(n+4)**3, why:'These are consecutive cube numbers.'};
+    }
+    function makeTimesTableSequence(){
+      const times = rand(3, 12);
+      const start = rand(1, 5);
+      return {seq:[times*start,times*(start+1),times*(start+2),times*(start+3)], answer:times*(start+4), why:`These are multiples of ${times}.`};
+    }
+    function makePlusGrowingSequence(){
+      const start = rand(1, 10);
+      const firstJump = rand(1, 4);
+      const seq = [start, start + firstJump, start + firstJump + firstJump + 1, start + firstJump + firstJump + 1 + firstJump + 2];
+      return {seq, answer:seq[3] + firstJump + 3, why:`The amount added increases by 1 each step.`};
+    }
+    function makeMultiplyThenAddSequence(){
+      const start = rand(2, 6);
+      const add = rand(1, 5);
+      const b = start * 2 + add;
+      const c = b * 2 + add;
+      const d = c * 2 + add;
+      return {seq:[start,b,c,d], answer:d * 2 + add, why:`Each number is doubled, then ${add} is added.`};
+    }
+    function makeEvenOddJumpSequence(){
+      const start = rand(2, 12);
+      return {seq:[start,start+2,start+6,start+8,start+12], answer:start+14, why:'The jumps alternate +2, +4, +2, +4, so the next jump is +2.'};
+    }
+    function makeHalvingSequence(){
+      const start = [64,96,128,160,192][rand(0,4)];
+      return {seq:[start,start/2,start/4,start/8], answer:start/16, why:'Each number is halved.'};
+    }
+    function makePrimeSequence(){
+      const primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
+      const start = rand(0, 6);
+      return {seq:primes.slice(start,start+5), answer:primes[start+5], why:'These are consecutive prime numbers.'};
+    }
     function buildPatternQuestion(){
-      const generators = [makeArithmeticSequence, makeDoublingSequence, makeFibonacciLike, makeAlternatingSequence, makeSquareSequence];
+      const generators = [
+        makeArithmeticSequence, makeSubtractionSequence, makeDoublingSequence, makeTriplingSequence,
+        makeFibonacciLike, makeAlternatingSequence, makeSquareSequence, makeCubeSequence,
+        makeTimesTableSequence, makePlusGrowingSequence, makeMultiplyThenAddSequence,
+        makeEvenOddJumpSequence, makeHalvingSequence, makePrimeSequence
+      ];
       const built = generators[rand(0, generators.length - 1)]();
       const distractors = new Set();
       while(distractors.size < 3){
-        const delta = rand(1, 5) * (Math.random() > 0.5 ? 1 : -1);
+        const delta = rand(1, 9) * (Math.random() > 0.5 ? 1 : -1);
         const val = built.answer + delta;
         if(val !== built.answer && val >= 0) distractors.add(val);
       }
@@ -410,15 +656,15 @@
     }
     function buildLevelData(){
       return {
-        1: sample(oddOneBank, 5).map(buildOddQuestion),
+        1: sample([...hardLevelOneBank, ...hardLevelOneBank, ...oddOneBank], 5).map(buildOddQuestion),
         2: Array.from({length:5}, () => randomColorRound(false)),
         3: Array.from({length:5}, () => buildSymmetryQuestion()),
         4: Array.from({length:5}, () => buildPatternQuestion()),
         5: [
-          {type:'odd', ...buildOddQuestion(sample(oddOneBank,1)[0]), q:'Hard round 1 · Which is the odd one out?'},
+          {type:'odd', ...buildOddQuestion(sample([...hardLevelOneBank, ...oddOneBank],1)[0]), q:'Hard round 1 · Which is the odd one out?'},
           {type:'color', text:'Hard round 2 · One square is almost identical. Find it.', ...randomColorRound(true)},
           {type:'pattern', ...buildPatternQuestion(), q:'Hard round 3 · What comes next?'},
-          {type:'odd', ...buildOddQuestion(sample(oddOneBank,1)[0]), q:'Hard round 4 · Which option breaks the group?'},
+          {type:'odd', ...buildOddQuestion(sample([...hardLevelOneBank, ...oddOneBank],1)[0]), q:'Hard round 4 · Which option breaks the group?'},
           {type:'pattern', ...buildPatternQuestion(), q:'Hard round 5 · What comes next?'}
         ]
       };
@@ -464,7 +710,7 @@
         area.innerHTML = `
           <div class="completion">
             <h3>Run complete</h3>
-            <p>You finished <strong>${levelMeta[currentLevel].title}</strong> with a score of <strong>${state.score}/${state.total}</strong>. A new run has already been prepared automatically.</p>
+            <p>You finished <strong>${levelMeta[currentLevel].title}</strong> with a score of <strong>${state.score}/${state.total}</strong>.</p>
             <div class="mini-flex">
               <button class="btn btn-primary" onclick="startLevel(${currentLevel})">Play Again</button>
               <button class="btn btn-ghost" onclick="goHome()">Back Home</button>
@@ -483,7 +729,6 @@
       area.innerHTML = `
         <div class="question-card">
           <div class="question">${item.q}</div>
-          <div class="subtle">Freshly shuffled options for this run.</div>
           <div class="options">
             ${item.options.map((opt,i)=>`<button class="option" onclick="answerMultipleChoice(${i}, ${item.answer}, ${JSON.stringify(item.why).replace(/"/g,'&quot;')})">${opt}</button>`).join('')}
           </div>
@@ -501,7 +746,6 @@
       area.innerHTML = `
         <div class="color-grid-wrap">
           <div class="question">Find the one square with the slightly different colour.</div>
-          <div class="subtle">This grid and colour palette were generated for the current run.</div>
           <div class="color-grid" style="grid-template-columns:repeat(${config.size}, max-content)">${cells}</div>
           <div id="feedback" class="feedback"></div>
           <div id="nextRow" class="next-row hidden"><button class="btn btn-primary" onclick="nextQuestion()">Next</button></div>
@@ -515,7 +759,6 @@
       area.innerHTML = `
         <div class="symmetry-wrap">
           <div class="question">Which pattern is <em>not</em> vertically symmetric?</div>
-          <div class="subtle">Only one card breaks the mirror line.</div>
           <div class="shape-options">
             ${item.cards.map((card,i)=>`<button class="shape-card" onclick="answerMultipleChoice(${i}, ${item.answer}, ${JSON.stringify(item.why).replace(/"/g,'&quot;')})">${shapeGridHTML(card.pattern)}<div class="tiny">Option ${i+1}</div></button>`).join('')}
           </div>
@@ -528,7 +771,6 @@
       area.innerHTML = `
         <div class="pattern-wrap">
           <div class="question">${item.q || 'What comes next in the pattern?'}</div>
-          <div class="subtle">Generated sequence for this run — the rule is meant to be logical, not overly mathematical.</div>
           <div class="pattern-seq">${item.seq.map(n => `<div class="seq-box">${n}</div>`).join('')}<div class="seq-box">?</div></div>
           <div class="options">
             ${item.options.map((opt,i)=>`<button class="option" onclick="answerMultipleChoice(${i}, ${item.answer}, ${JSON.stringify(item.why).replace(/"/g,'&quot;')})">${opt}</button>`).join('')}
